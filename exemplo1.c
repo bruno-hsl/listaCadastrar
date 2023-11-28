@@ -2,13 +2,13 @@
 #include <stdlib.h>
 #include <time.h>
 
-
 typedef struct Pessoa{
     int id;
     char nome[30];
     int idade;
     struct Pessoa *prox;
 }Pessoa;
+
 //funcao que cria a lista vazia
 Pessoa* criarListaVazia(){
     return NULL;
@@ -32,7 +32,7 @@ Pessoa* cadastrar(Pessoa *lista){
     //inserir as informacoes
     srand(time(NULL));
     novaPessoa->id = rand() % 100;
-    printf("Digite o nome");
+    printf("Digite o nome: ");
     fflush(stdin);
     fgets(novaPessoa->nome, sizeof(novaPessoa), stdin);
     fflush(stdin);
@@ -41,7 +41,7 @@ Pessoa* cadastrar(Pessoa *lista){
     scanf("%d", &novaPessoa->idade);
     fflush(stdin);                                            
 
-    //duas situacoes1 - lista é vazia 2 já tem alguem na lista
+    //duas situacoes 1 - lista é vazia 2 já tem alguem na lista
     if(lista == NULL){
         return novaPessoa;
     }else{
@@ -55,9 +55,86 @@ Pessoa* cadastrar(Pessoa *lista){
     }
 }
 
+void mostrar(Pessoa *lista){
+    if(lista == NULL){
+        printf("Lista NULA");
+        return;
+    } else{
+        Pessoa *atual = lista;
+        while(atual != NULL){
+            printf("NOme: %s", atual->nome);
+            printf("\nIdade: %d", atual->idade);
+            printf("\nId: %d", atual->id);
+            atual = atual->prox;
+        }
+    }
+}
+
+Pessoa* buscarPessoa(Pessoa *lista, int idBusca){
+    if(lista == NULL){
+        printf("Lista NULA");
+        return;
+    } else{
+        Pessoa *atual = lista;
+        while(atual != NULL){
+            if(atual->id == idBusca){
+                printf("NOme: %s", atual->nome);
+                printf("Idade: %d", atual->idade);
+                printf("\nId: %d", atual->id);
+                return atual;
+            }
+            atual = atual->prox;
+        }
+        printf("Pessoa nao encontrada");
+        return NULL;
+    }
+}
+
+void alterar(Pessoa *encontrada){
+    printf("Alteracao dos campos");
+    printf("\nDigite o nome: ");
+    fflush(stdin);
+    fgets(encontrada->nome, sizeof(encontrada->nome), stdin);
+    fflush(stdin);
+    printf("Digite a idade: ");
+    fflush(stdin);
+    scanf("%d", &encontrada->idade);
+    fflush(stdin);         
+}
+
+Pessoa* excluir(Pessoa *lista, int idBusca){
+    Pessoa *anterior = NULL;
+    Pessoa *atual = lista;
+
+    while(atual != NULL && atual->id != idBusca){
+        anterior = atual;
+        atual = atual->prox;
+
+    }
+    if(atual != NULL){
+        //logica de exclusao
+        if(anterior != NULL){
+            //excluir alguem que nao esta no inicio da lista
+            anterior->prox = atual->prox;
+
+        } else {
+            //excluir o primeiro da lista 
+            lista = atual->prox;
+        }
+        free(atual);
+        printf("Excluido com sucesso");
+
+    } else{
+        printf("Pessoa nao encontrada");
+    }
+    return lista;
+
+}
+
 main(){
-    int opcao;
+    int opcao, idBusca;
     Pessoa *lista = criarListaVazia();
+    Pessoa *encontrada;
     do{
         printf("\n1 - Cadastrr");
         printf("\n2 - Mostrar");
@@ -69,15 +146,32 @@ main(){
         switch(opcao){
             case 1:
                 lista = cadastrar(lista);
-            break;
+                break;
+
             case 2:
-            break;
+                mostrar(lista);
+                break;
+
             case 3:
-            break;
+                printf("Digite o id para buscar");
+                scanf("%d", &idBusca);
+                encontrada = buscarPessoa(lista, idBusca);
+                break;
+
             case 4:
-            break;
+                printf("Digite o id para buscar");
+                scanf("%d", &idBusca);
+                encontrada = buscarPessoa(lista, idBusca);
+                if(encontrada != NULL){
+                    alterar(encontrada);
+                }
+                break;
+
             case 5:
-            break;
+                printf("Digite o id para buscar");
+                scanf("%d", &idBusca);
+                lista = excluir(lista, idBusca);
+                break;
         }
     }while(opcao != 0);
     
